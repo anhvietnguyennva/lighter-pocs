@@ -2,6 +2,8 @@ import asyncio
 
 import lighter
 
+STAKING_POOL_INDEX = 281474976624800
+
 
 async def main():
     client = lighter.SignerClient(
@@ -11,18 +13,18 @@ async def main():
     )
 
     api_client = lighter.ApiClient(configuration=lighter.Configuration(host="https://mainnet.zklighter.elliot.ai/"))
-    client.check_client()
+    err = client.check_client()
+    if err is not None:
+        print(f"CheckClient error: {err}")
+        return
+    
 
-    market_index = 2049
-
-    tx, tx_hash, err = await client.create_market_order(
-        market_index=market_index,
-        client_order_index=0,
-        base_amount=1000000,  # 1 LIT
-        avg_execution_price=1_3000,  # $1.3 -- worst acceptable price for the order
-        is_ask=False,
+    tx_info, response, err = await client.stake_assets(
+        staking_pool_index=STAKING_POOL_INDEX,
+        share_amount=1000000,  # 1 LIT
     )
-    print(f"Create Order {tx.to_json()} {tx_hash} {err}")
+
+    print(f"Mint Shares {tx_info=} {response=} {err=}")
     if err is not None:
         raise Exception(err)
 
