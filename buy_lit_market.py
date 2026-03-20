@@ -18,8 +18,8 @@ async def main():
     tx, tx_hash, err = await client.create_market_order(
         market_index=market_index,
         client_order_index=0,
-        base_amount=1000000,  # 1 LIT
-        avg_execution_price=1_3000,  # $1.3 -- worst acceptable price for the order
+        base_amount=100,  # 1 LIT
+        avg_execution_price=1_2000,
         is_ask=False,
     )
     print(f"Create Order {tx.to_json()} {tx_hash} {err}")
@@ -31,5 +31,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
     asyncio.run(main())

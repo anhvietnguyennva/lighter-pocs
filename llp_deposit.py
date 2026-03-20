@@ -3,7 +3,7 @@ import asyncio
 import lighter
 from decimal import Decimal
 
-STAKING_POOL_INDEX = 281474976624800
+LLP_POOL_INDEX = 281474976710654
 
 
 async def main():
@@ -18,21 +18,20 @@ async def main():
     if err is not None:
         print(f"CheckClient error: {err}")
         return
-    
+
     account_api = lighter.AccountApi(api_client)
-    pool_resp = await account_api.account(by="index", value=str(STAKING_POOL_INDEX))
+    pool_resp = await account_api.account(by="index", value=str(LLP_POOL_INDEX))
     pool_account = pool_resp.accounts[0]
 
-    share_price = Decimal(pool_account.assets[0].balance) / Decimal(pool_account.pool_info.total_shares)
-    print(
-        f"poolAccountId: {STAKING_POOL_INDEX} sharePrice: {share_price:.8f}")
-    
-    stake_amount = Decimal(2)
-    share_amount = int(stake_amount / share_price)
+    share_price = Decimal(pool_account.total_asset_value) / Decimal(pool_account.pool_info.total_shares)
+    print(f"poolAccountId: {LLP_POOL_INDEX} sharePrice: {share_price}")
 
-    tx_info, response, err = await client.stake_assets(
-        staking_pool_index=STAKING_POOL_INDEX,
-        share_amount=share_amount,  # 1 LIT
+    deposit_amount = Decimal(5)
+    share_amount = int(deposit_amount / share_price)
+
+    tx_info, response, err = await client.mint_shares(
+        public_pool_index=LLP_POOL_INDEX,
+        share_amount=share_amount, 
     )
 
     print(f"Mint Shares {tx_info=} {response=} {err=}")
